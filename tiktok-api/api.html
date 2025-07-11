@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Snapth - Tải video TikTok không logo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: linear-gradient(135deg, #1f1c2c, #928dab);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    input {
+      width: 100%;
+      max-width: 400px;
+      padding: 12px 18px;
+      border-radius: 10px;
+      border: none;
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+
+    button {
+      background: #00c6ff;
+      background: linear-gradient(to right, #0072ff, #00c6ff);
+      border: none;
+      padding: 12px 24px;
+      color: white;
+      border-radius: 25px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      opacity: 0.85;
+    }
+
+    video {
+      margin-top: 25px;
+      border-radius: 10px;
+      max-width: 100%;
+    }
+
+    #downloadLink {
+      display: inline-block;
+      margin-top: 15px;
+      color: #00ffe0;
+      font-weight: bold;
+      text-decoration: none;
+      border-bottom: 1px dashed;
+      transition: 0.3s;
+    }
+
+    #downloadLink:hover {
+      color: #ffffff;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📥 Snapth - Tải video TikTok không logo</h1>
+    <input type="text" id="videoUrl" placeholder="Dán link TikTok tại đây..." />
+    <button onclick="getVideo()">Tải Video</button>
+
+    <video id="preview" controls style="display:none;"></video>
+    <br/>
+    <a id="downloadLink" target="_blank" download style="display:none;">👉 Click để tải video</a>
+  </div>
+
+  <script>
+    async function getVideo() {
+      const url = document.getElementById('videoUrl').value.trim();
+      if (!url) return alert("⚠️ Bạn chưa nhập link TikTok!");
+
+      try {
+        const res = await fetch(`http://localhost:3000/tiktok?url=${encodeURIComponent(url)}`);
+        const data = await res.json();
+
+        if (data.success) {
+          const preview = document.getElementById('preview');
+          const link = document.getElementById('downloadLink');
+
+          preview.src = data.download_url;
+          preview.style.display = 'block';
+
+          link.href = data.download_url;
+          link.style.display = 'inline-block';
+        } else {
+          alert("❌ Không lấy được video.");
+        }
+      } catch (err) {
+        alert("🚫 Lỗi kết nối API.");
+        console.error(err);
+      }
+
+window.addEventListener('DOMContentLoaded', async () => {
+  try {
+    // Phải có quyền từ người dùng để đọc clipboard (chạy trên HTTPS hoặc localhost)
+    const text = await navigator.clipboard.readText();
+    if (text.includes('tiktok.com')) {
+      const confirmed = confirm("📋 Bạn vừa copy link TikTok, có muốn dán tự động không?");
+      if (confirmed) {
+        document.getElementById('videoUrl').value = text;
+      }
+    }
+  } catch (err) {
+    console.warn('Không thể đọc clipboard:', err);
+  }
+});
+
+
+    }
+  </script>
+</body>
+</html>
